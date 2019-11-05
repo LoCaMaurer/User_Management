@@ -19,7 +19,8 @@ public class UserMngmt {
 		String content = new String(Files.readAllBytes(Paths.get(file.toURI())), "UTF-8");
 		JSONObject json = new JSONObject(content);
 		JSONObject client = json.getJSONObject(username);
-		String passwordR = client.getString("Passwort");
+		Encryption enc = new Encryption();
+		String passwordR = new String(enc.decrypt(client.getString("Passwort").getBytes()));
 		return password.equals(passwordR);
 		
 	} catch (JSONException | IOException e) {
@@ -66,7 +67,9 @@ public class UserMngmt {
 		JSONObject json = new JSONObject(content);
 		
 		JSONObject newUser = new JSONObject();
-		newUser.put("Passwort", password);
+		Encryption enc = new Encryption();
+		String encPassword = new String(enc.encrypt(password.getBytes()));
+		newUser.put("Passwort", encPassword);
 		json.accumulate(username, newUser);
 		
 		FileWriter fw = new FileWriter(file);

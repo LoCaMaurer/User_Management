@@ -6,21 +6,7 @@ public class Test {
 	 */
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String 	username = "userddddgg",
-				password = "pwdddddd",
-				passwordE = Encryption.encrypt(password),
-				passwordD = Encryption.decrypt(passwordE);
-		
-		UserMngmt.createAccount(username, passwordE);
-		
-		
-		System.out.println(password.equals(passwordE));
-		System.out.println(password.equals(passwordD));
-		
-		
-		
-		
+		// TODO Auto-generated method stub	
 	}
 
 }
