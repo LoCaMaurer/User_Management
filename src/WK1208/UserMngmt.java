@@ -78,7 +78,7 @@ public class UserMngmt {
 		// TODO: handle exception
 	}
 	final long end = System.currentTimeMillis();
-	System.out.printf("Account in %d ms erstellt",end-start);
+	System.out.printf("Account in %d ms erstellt%n",end-start);
 	return;
 	
 	}
