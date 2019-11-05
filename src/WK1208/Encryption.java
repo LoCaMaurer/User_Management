@@ -24,11 +24,23 @@ public class Encryption {
 	 * Example in class Test with existing methods
 	 */
 	
-	protected static String encrypt(String password) {
-		return password + "     ";
+	protected byte[] encrypt(byte[] data) {
+		// TODO Auto-generated method stub
+		byte[] enc = new byte[data.length];
+		
+		for (int i = 0; i < data.length; i++) {
+		enc[i] = (byte) ((i%2 == 0)? data[i]+1:data[i]-1);	
+		}
+		return enc;
 	}
 	
-	protected static String decrypt(String password) {
-		return password.trim();
+	protected byte[] decrypt(byte[] data) {
+		// TODO Auto-generated method stub
+		byte[] enc = new byte[data.length];
+		
+		for (int i = 0; i < data.length; i++) {
+		enc[i] = (byte) ((i%2 == 0)? data[i] -1 :data[i] +1);	
+		}
+		return enc;
 	}
 }
