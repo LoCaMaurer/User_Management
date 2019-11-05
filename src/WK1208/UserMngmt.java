@@ -2,6 +2,7 @@ package WK1208;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.json.*;
@@ -10,97 +11,78 @@ public class UserMngmt {
 /*
  * This class is used for user management and should not be accessed from outside.
  */
-protected static boolean  validLogin(String username, String password) {
+	protected static boolean  validLogin(String username, String password) {
 	
-	if(username.trim().length() > 19 || password.trim().length()>19) {
-		System.err.print("max 20 character");
+	File file = new File("res/usr.json");
+	
+	try {
+		String content = new String(Files.readAllBytes(Paths.get(file.toURI())), "UTF-8");
+		JSONObject json = new JSONObject(content);
+		JSONObject client = json.getJSONObject(username);
+		String passwordR = client.getString("Passwort");
+		return password.equals(passwordR);
+		
+	} catch (JSONException | IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 		return false;
 	}
-	
-	String dirPath = "res/usr.json";
-	File file = new File(dirPath);
+}
+
+	private static boolean userExist(String username) {
+	File file = new File("res/usr.json");
 	
 	try {
 		String content = new String(Files.readAllBytes(Paths.get(file.toURI())), "UTF-8");
 		JSONObject json = new JSONObject(content);
-		JSONArray userArray = json.getJSONArray("users");
+		JSONObject user = json.getJSONObject(username);
+		return true;
 		
-		for (Object object : userArray) {
-			JSONObject temp = (JSONObject) object;
-			String tempID = temp.getString("id");
-			String tempPW = temp.getString("pw");
-			
-			if(!username.isEmpty() && !password.isEmpty()) {
-				if(username.trim().equals(tempID) && password.trim().equals(tempPW))
-				return true;
-			}
-		}
+	} catch (JSONException  | IOException e) {
+		return false;
+	}
+}
+
+	protected static void createAccount(String username, String password) {
+	if(!userExist(username))
+		testInput(username, password);
+	else
+		System.err.println("Existing user!");
+}
+
+	private static void testInput(String username, String password) {
+	if((!username.isEmpty() && !password.isEmpty()))
+		if(username.trim().length() > 4 && password.trim().length() > 4)
+			if(username.trim().length() < 19 && password.trim().length() < 19)
+				setUser(username, password);		
+}
+
+	private static void setUser(String username, String password) {
+	final long start = System.currentTimeMillis();  
 		
-	} catch (Exception e) {
-		e.printStackTrace();
+		File file = new File("res/usr.json");
+	try {
+		String content = new String(Files.readAllBytes(Paths.get(file.toURI())), "UTF-8");
+		JSONObject json = new JSONObject(content);
+		
+		JSONObject newUser = new JSONObject();
+		newUser.put("Passwort", password);
+		json.accumulate(username, newUser);
+		
+		FileWriter fw = new FileWriter(file);
+		fw.write(json.toString());
+		fw.flush();
+		fw.close();
+		
+	} catch (JSONException  | IOException e) {
 		// TODO: handle exception
 	}
-	return false;
-}
-
-private static boolean userExist(String username) {
-	String dirPath = "res/usr.json";
-	File file = new File(dirPath);
+	final long end = System.currentTimeMillis();
+	System.out.printf("Account in %d ms erstellt",end-start);
+	return;
 	
-	try {
-		String content = new String(Files.readAllBytes(Paths.get(file.toURI())), "UTF-8");
-		JSONObject json = new JSONObject(content);
-		JSONArray userArray = json.getJSONArray("users");
-		
-		for (Object object : userArray) {
-			JSONObject temp = (JSONObject) object;
-			String tempID = temp.getString("id");
-			if(username.equals(tempID))
-				return true;
-		}
-		
-	} catch (Exception e) {
-		// TODO: handle exception
-		e.printStackTrace();
-}
-	return false;
-}
+	}
+	}
 
-protected static void createAccount(String username, String password) {
-	if(!userExist(username)) {
-		if(username.trim().length() > 19 || password.trim().length() >19) {
-			System.err.println("Username or password to long! Please use max. 19 characters!");
-			return;
-		}
-			if(username.trim().length() > 5 && password.trim().length() >5) { 
-				String dirPath = "res/usr.json";
-				File file = new File(dirPath);
-				try {
-					String content = new String(Files.readAllBytes(Paths.get(file.toURI())), "UTF-8");
-					JSONObject json = new JSONObject(content);
-					JSONArray jasonArray = json.getJSONArray("users");
-					
-					JSONObject otba = new JSONObject();
-					otba.put("id", username.trim());
-					otba.put("pw", password.trim());
-					
-					jasonArray.put(otba);
-					
-					FileWriter fw = new FileWriter(file);
-					fw.write(json.toString());
-					fw.flush();
-					fw.close();
-				
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
-				}
-			}
-			else
-				System.err.println("Username and password need at least 6 characters");
-			}
-		
-	else
-		System.err.println("User already exists!");
-}
-}
+
+

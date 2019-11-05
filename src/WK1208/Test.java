@@ -7,8 +7,8 @@ public class Test {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String 	username = "user",
-				password = "pw",
+		String 	username = "userddddgg",
+				password = "pwdddddd",
 				passwordE = Encryption.encrypt(password),
 				passwordD = Encryption.decrypt(passwordE);
 		
